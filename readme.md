@@ -66,6 +66,8 @@
 | 3 | Беларусь | 0.42% |
 | 4 | Нидерланды | 0.36% |
 
+[^3]
+
 ##### Демографические показатели
 
 ###### Распределение по полу
@@ -85,10 +87,12 @@ pie
   "65+": 1029
 ```
 
+[^3]
+
 ##### Устройства
 
-- Десктоп: **29%** [^4]
-- Мобильный: **71%** [^4]
+- Десктоп: **22%** [^4]
+- Мобильный: **78%** [^4]
 
 ## Список источников
 
@@ -96,6 +100,6 @@ pie
 
 [^2]: [Avito Product Bootcamp 2024](https://vc.ru/u/742522-vadim-novikov/1087543-avito-product-bootcamp-2024)
 
-[^3]: [Similar Web](https://www.similarweb.com/ru/website/avito.ru/)
+[^3]: [Similar Web 2024](https://www.similarweb.com/ru/website/avito.ru/)
 
-[^4]: [Avito Club](https://avito-club.ru/archives/224)
+[^4]: [Avito B2B 2021](https://www.avito.ru/b2b/most-popular-classified/?ysclid=m7c6cp1fwl280594081)
