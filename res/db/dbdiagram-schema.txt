@@ -1,0 +1,86 @@
+Table User {
+  id uuid [primary key]
+  name text
+  email text [unique]
+  phone_number text [unique]
+  avatar_url text
+  password_hash text
+  rating numeric(3, 2)
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Avatar {
+  id uuid [primary key, ref: - User.avatar_url]
+  image file
+}
+
+Table Session {
+  token text [primary key]
+  user_id uuid [ref: - User.id]
+  ip_address text
+  created_at timestamp
+  expires_at timestamp
+}
+
+Table Favorite {
+  id uuid [primary key]
+  user_id uuid [ref: > User.id]
+  announcement_id uuid [ref: > Announcement.id]
+}
+
+Table Category {
+  id uuid [primary key]
+  name text
+  attributes json
+  subcategories Category[]
+
+  Note: 'Store categories hierarchy in mongodb document, each category has specific attributes'
+}
+
+Table AnnouncementAttributes {
+  id uuid [primary key]
+  announcement_id uuid [ref: > Announcement.id]
+  attributes json [note: 'Store values of attributes described in category document of mongodb']
+}
+
+Table Announcement {
+  id uuid [primary key]
+  title text
+  description text
+  price numeric(16, 2)
+  category uuid [ref: - Category.id, note: 'Store path to category in mongodb document']
+  address geography
+  image_urls text[]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table AnnouncementImage {
+  id uuid [primary key, ref: > Announcement.image_urls]
+  image file
+}
+
+Table AnnouncementSearch {
+  id uuid [primary key]
+  announcement_id uuid [ref: - Announcement.id]
+  title text
+  description text
+  category Category[]
+}
+
+Table Feedback {
+  id uuid [primary key]
+  user_id uuid [ref: > User.id]
+  announcement_id uuid [ref: > Announcement.id]
+  body text
+  rating numeric(3, 2)
+  image_urls text[]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table FeedbackImage {
+  id uuid [primary key, ref: > Feedback.image_urls]
+  image file
+}
