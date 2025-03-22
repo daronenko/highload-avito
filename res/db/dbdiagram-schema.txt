@@ -1,36 +1,42 @@
 Table User {
   id uuid [primary key]
+  
   name text
   email text [unique]
   phone_number text [unique]
-  avatar_url text
+  avatar_url text [ref: - Storage.id]
   password_hash text
   rating numeric(3, 2)
+  liked_cards uuid[]
+  
   created_at timestamp
   updated_at timestamp
 }
 
-Table Avatar {
-  id uuid [primary key, ref: - User.avatar_url]
-  image file
+Table Storage {
+  id uuid [primary key]
+  
+  object file [not null]
+
+  created_at timestamp
+
+  Note: 'Store in S3 storage'
 }
 
-Table Session {
+Table UserSession {
   token text [primary key]
   user_id uuid [ref: - User.id]
+  
+  user_agent text
   ip_address text
+  
   created_at timestamp
   expires_at timestamp
 }
 
-Table Favorite {
-  id uuid [primary key]
-  user_id uuid [ref: > User.id]
-  announcement_id uuid [ref: > Announcement.id]
-}
-
 Table Category {
   id uuid [primary key]
+  
   name text
   attributes json
   subcategories Category[]
@@ -38,49 +44,138 @@ Table Category {
   Note: 'Store categories hierarchy in mongodb document, each category has specific attributes'
 }
 
-Table AnnouncementAttributes {
+Table Card {
   id uuid [primary key]
-  announcement_id uuid [ref: > Announcement.id]
-  attributes json [note: 'Store values of attributes described in category document of mongodb']
-}
-
-Table Announcement {
-  id uuid [primary key]
+  
   title text
   description text
   price numeric(16, 2)
-  category uuid [ref: - Category.id, note: 'Store path to category in mongodb document']
   address geography
-  image_urls text[]
+  image_urls text[] [ref: > Storage.id]
+  category_path Category[] [ref: - Category.id, note: 'Store path to category in mongodb document']
+  attributes json [note: 'Store values of attributes described in category document of mongodb']
+  
+  is_hidden bool [default: true, note: 'Card is not hidden after successful moderation']
+  
   created_at timestamp
   updated_at timestamp
 }
 
-Table AnnouncementImage {
-  id uuid [primary key, ref: > Announcement.image_urls]
-  image file
-}
-
-Table AnnouncementSearch {
+Table CardSearch {
   id uuid [primary key]
-  announcement_id uuid [ref: - Announcement.id]
+  card_id uuid [ref: - Card.id]
+  
   title text
   description text
   category Category[]
+  attributes json
 }
 
-Table Feedback {
+Table Review {
   id uuid [primary key]
   user_id uuid [ref: > User.id]
-  announcement_id uuid [ref: > Announcement.id]
+  card_id uuid [ref: > Card.id]
+  
   body text
   rating numeric(3, 2)
-  image_urls text[]
+  image_urls text[] [ref: > Storage.id]
+  
   created_at timestamp
   updated_at timestamp
 }
 
-Table FeedbackImage {
-  id uuid [primary key, ref: > Feedback.image_urls]
-  image file
+Table Event {
+  id uuid [primary key]
+  user_id uuid [ref: > User.id]
+  card_id uuid [ref: > Card.id]
+  
+  event_type text [note: 'view, like']
+  extra json [note: 'Extra event data']
+  
+  created_at timestamp
+}
+
+Table RawUserMetrics {
+  id uuid [primary key]
+  user_id uuid [ref: > User.id]
+  object_id uuid [null]
+  object_type text [note: 'card, category, etc.']
+  
+  event_type text [note: 'view, like, review, purchase']
+  extra json [note: 'Extra event data']
+  
+  created_at timestamp
+}
+
+Table UserMetrics {
+  id uuid [primary key]
+  
+  top_categories Category[] [ref: > Category.id]
+  top_attributes text[] [ref: > Category.attributes]
+  
+  total_views int
+  total_likes int
+  total_reviews int
+  total_deals int
+
+  updated_at timestamp
+}
+
+Table ModerationQueue {
+  id uuid [primary key]
+  item_id uuid [note: 'Card/Review id']
+  
+  item_type text [note: 'card, review']
+  user_id uuid [ref: > User.id]
+  content text [note: 'Card/Review text']
+  image_urls text[] [ref: > Storage.id]
+  
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table ModerationResult {
+  id uuid [primary key]
+  item_id uuid [ref: > ModerationQueue.item_id]
+  
+  status text [note: 'approved, rejected']
+  rejection_reason text [null]
+  
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table Chat {
+  id uuid [primary key]
+
+  last_messages ChatMessage[]
+
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table ChatMessage {
+  id uuid [primary key]
+  chat_id uuid [ref: > Chat.id]
+  
+  sender_id uuid [ref: > User.id]
+  receiver_id uuid [ref: > User.id]
+
+  body text [not null]
+  attachment_urls text[] [ref: > Storage.id]
+  is_edited bool [default: false]
+
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table ChatMessageBuffer {
+  message_id uuid [primary key, ref: - ChatMessage.id]
+  chat_id uuid [ref: > Chat.id]
+  
+  sender_id uuid [ref: > User.id]
+  receiver_id uuid [ref: > User.id]
+
+  body text [not null]
+  attachment_urls text[] [ref: > Storage.id]
 }
