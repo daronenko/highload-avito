@@ -8,6 +8,9 @@ Table User {
   password_hash text
   rating numeric(3, 2)
   liked_cards uuid[]
+
+  top_categories Category[] [ref: > Category.id]
+  top_attributes text[] [ref: > Category.attributes]
   
   created_at timestamp
   updated_at timestamp
@@ -96,11 +99,12 @@ Table Event {
   created_at timestamp
 }
 
-Table RawUserMetrics {
+Table DWH {
   id uuid [primary key]
   user_id uuid [ref: > User.id]
+  
   object_id uuid [null]
-  object_type text [note: 'card, category, etc.']
+  object_type text [note: 'card, review, category, etc.']
   
   event_type text [note: 'view, like, review, purchase']
   extra json [note: 'Extra event data']
@@ -110,16 +114,25 @@ Table RawUserMetrics {
 
 Table UserMetrics {
   id uuid [primary key]
+  user_id uuid [ref: > User.id]
   
-  top_categories Category[] [ref: > Category.id]
-  top_attributes text[] [ref: > Category.attributes]
-  
-  total_views int
-  total_likes int
-  total_reviews int
-  total_deals int
+  views int
+  likes int
+  reviews int
+  deals int
+  cards_posted int
+  cards_sold int
+  reports_received int
+}
 
-  updated_at timestamp
+Table CardMetrics {
+  id uuid [primary key]
+  card_id uuid [ref: > Card.id]
+  
+  views int
+  likes int
+  reviews int
+  reports_received int
 }
 
 Table ModerationQueue {
@@ -137,7 +150,7 @@ Table ModerationQueue {
 
 Table ModerationResult {
   id uuid [primary key]
-  item_id uuid [ref: > ModerationQueue.item_id]
+  item_id uuid [ref: > ModerationQueue.item_id, ref: > Card.id, ref: > Review.id]
   
   status text [note: 'approved, rejected']
   rejection_reason text [null]
