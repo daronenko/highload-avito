@@ -76,9 +76,10 @@ Table CardSearch {
 
 Table Review {
   id uuid [primary key]
-  author_user_id uuid [ref: > User.id]
-  target_user_id uuid [ref: > User.id]
-  card_id uuid [ref: > Card.id]
+  user_id uuid [ref: > User.id]
+  
+  object_type text [note: 'user, card']
+  object_id uudi [ref: > User.id, ref: > Card.id]
   
   body text
   rating numeric(3, 2)
