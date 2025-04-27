@@ -981,22 +981,3 @@ N-граммы [^11] - это статистические модели, кот�
 [^10]: [BM25](https://ru.wikipedia.org/wiki/Okapi_BM25)
 
 [^11]: [N-gram](https://habr.com/ru/articles/675218/)
-
-| База данных | Сервис | Целевая пиковая нагрузка | CPU | RAM | Disk |
-| - | - | - | - | - | - |
-| MongoDB | user, card, chat |  |  |  | 5 * 365 * (0.12 + 15.6 + 0.07 + 2.9 + 18) |
-| Tarantool | auth, card, search |  |  |  | 5 * 365 * (0.7 + 8.1) |
-| Clickhouse | user, card |  |  |  | 5 * 365 * (5.1 + 5.1) |
-| Greenplum | events, recommendations, moderation |  |  |  | 5 * 365 * (44.3) |
-| ElasticSearch | search |  |  |  | 5 * 365 * (8.1) |
-| CEPH | storage, recommendations, moderation |  |  |  | 5 * 365 * (245 + 12.2 + 1.2) * 3 |
-
-
-| **База данных** | **Сервис** | **Целевая пиковая нагрузка** | **CPU** | **RAM** | **Disk** |
-| - | - | :-: | :-: | :-: | :-: |
-| MongoDB | user, card, chat | 2736 + 13434 + 11112 |  |  | 327 Тб |
-| Tarantool | auth, card, search | 16950 + 13434 + 4776 |  |  | 78 Тб |
-| Clickhouse | user, card | 2736 + 13434 |  |  | 91 Тб |
-| Greenplum | events, recommendations, moderation | 25776 / 128 |  |  | 395 Тб |
-| ElasticSearch | search | 4776 |  |  | 72 Тб |
-| CEPH | storage, recommendations, moderation | 19584 + 4305 + 525 |  |  | 1382 Тб |
